@@ -1,0 +1,113 @@
+{
+  "info": {
+    "name": "Campus Issue Portal API",
+    "description": "API collection for Campus Issue Reporting Portal by Rudra Kumar",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8080/api" },
+    { "key": "student_token", "value": "" },
+    { "key": "admin_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rudra Kumar\",\n  \"email\": \"rudra@niet.ac.in\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Student",
+          "event": [{ "listen": "test", "script": { "exec": ["pm.collectionVariables.set('student_token', pm.response.json().token);"] } }],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rudra@niet.ac.in\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "event": [{ "listen": "test", "script": { "exec": ["pm.collectionVariables.set('admin_token', pm.response.json().token);"] } }],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@campus.edu\",\n  \"password\": \"admin123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Issues - Student",
+      "item": [
+        {
+          "name": "Submit Issue",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/issues",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{student_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Broken AC in Lab 3\",\n  \"description\": \"The AC has not been working for 3 days causing discomfort during practicals.\",\n  \"category\": \"ELECTRICAL\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get My Issues",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/issues/my",
+            "header": [{ "key": "Authorization", "value": "Bearer {{student_token}}" }]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Issues - Admin",
+      "item": [
+        {
+          "name": "Get All Issues",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/issues",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }]
+          }
+        },
+        {
+          "name": "Update Issue Status",
+          "request": {
+            "method": "PUT",
+            "url": "{{base_url}}/issues/1/status",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
